@@ -26,7 +26,7 @@ export default function App() {
   const [isXNext, setIsXNext] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  function handleReset() {
+  function handleNewGame() {
     if (isPlaying && square.every((el) => el === null)) return;
     setSquare(Array(9).fill(null));
     setIsPlaying((isPlaying) => !isPlaying);
@@ -50,14 +50,14 @@ export default function App() {
         isXNext={isXNext}
         isPlaying={isPlaying}
       />
-      <Button handleReset={handleReset} isPlaying={isPlaying} />
+      <Button handleNewGame={handleNewGame} isPlaying={isPlaying} />
     </div>
   );
 }
-function Button({ handleReset, isPlaying }) {
+function Button({ handleNewGame, isPlaying }) {
   return (
     <div className="btn_container">
-      <button onClick={handleReset}>{isPlaying ? "Reset" : "Play"}</button>
+      <button onClick={handleNewGame}>{isPlaying ? "NewGame" : "Play"}</button>
     </div>
   );
 }
