@@ -1,11 +1,37 @@
 import { useState } from "react";
 
+const winnerOutcomes = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 8],
+];
+
+function calcWinner(square) {
+  for (let i = 0; i < winnerOutcomes.length; i++) {
+    const [x, y, z] = winnerOutcomes[i];
+    if (square[x] && square[x] === square[y] && square[x] === square[z]) {
+      return square[x];
+    }
+  }
+  return null;
+}
+
 export default function App() {
   const [square, setSquare] = useState(Array(9).fill(null));
   const [isXNext, setIsXNext] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+
   function handleSquareClick(boxNum) {
     const clickedSquare = square.slice();
-    if (square[boxNum]) return;
+    if (square[boxNum] || calcWinner(square)) {
+      return;
+    }
+
     clickedSquare[boxNum] = "X";
     if (isXNext) {
       clickedSquare[boxNum] = "X";
@@ -15,8 +41,23 @@ export default function App() {
     setSquare(clickedSquare);
     setIsXNext(!isXNext);
   }
+
+  function handleReset() {
+    setSquare(Array(9).fill(null));
+    setIsPlaying((isPlaying) => !isPlaying);
+  }
+
+  const winner = calcWinner(square);
+  let status;
+  if (winner) {
+    status = "The winner is player:" + winner;
+  } else {
+    status = "Next move is for:" + (isXNext ? "X" : "O");
+  }
+
   return (
     <div className="App">
+      <div className="status">{isPlaying && status}</div>
       <div className="board_row">
         <Square value={square[0]} onSquareClick={() => handleSquareClick(0)} />
         <Square value={square[1]} onSquareClick={() => handleSquareClick(1)} />
@@ -31,6 +72,9 @@ export default function App() {
         <Square value={square[6]} onSquareClick={() => handleSquareClick(6)} />
         <Square value={square[7]} onSquareClick={() => handleSquareClick(7)} />
         <Square value={square[8]} onSquareClick={() => handleSquareClick(8)} />
+      </div>
+      <div className="btn_container">
+        <button onClick={handleReset}>{isPlaying ? "Reset" : "Play"}</button>
       </div>
     </div>
   );
