@@ -2,11 +2,18 @@ import { useState } from "react";
 
 export default function App() {
   const [square, setSquare] = useState(Array(9).fill(null));
-
+  const [isXNext, setIsXNext] = useState(true);
   function handleSquareClick(boxNum) {
     const clickedSquare = square.slice();
+    if (square[boxNum]) return;
     clickedSquare[boxNum] = "X";
+    if (isXNext) {
+      clickedSquare[boxNum] = "X";
+    } else {
+      clickedSquare[boxNum] = "O";
+    }
     setSquare(clickedSquare);
+    setIsXNext(!isXNext);
   }
   return (
     <div className="App">
