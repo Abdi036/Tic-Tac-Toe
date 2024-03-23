@@ -26,7 +26,54 @@ export default function App() {
   const [isXNext, setIsXNext] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
 
+  function handleReset() {
+    if (isPlaying && square.every((el) => el === null)) return;
+    setSquare(Array(9).fill(null));
+    setIsPlaying((isPlaying) => !isPlaying);
+  }
+
+  const winner = calcWinner(square);
+  let status;
+  if (winner) {
+    status = "The winner is player:" + winner;
+  } else {
+    status = `Next move for:${isXNext ? "X" : "O"}`;
+  }
+
+  return (
+    <div className="App">
+      <div className="status">{isPlaying && status}</div>
+      <Board
+        square={square}
+        setSquare={setSquare}
+        setIsXNext={setIsXNext}
+        isXNext={isXNext}
+        isPlaying={isPlaying}
+      />
+      <Button handleReset={handleReset} isPlaying={isPlaying} />
+    </div>
+  );
+}
+function Button({ handleReset, isPlaying }) {
+  return (
+    <div className="btn_container">
+      <button onClick={handleReset}>{isPlaying ? "Reset" : "Play"}</button>
+    </div>
+  );
+}
+
+function Square({ value, onSquareClick }) {
+  return (
+    <div>
+      <button className="square" onClick={onSquareClick}>
+        {value}
+      </button>
+    </div>
+  );
+}
+function Board({ square, setSquare, setIsXNext, isXNext, isPlaying }) {
   function handleSquareClick(boxNum) {
+    if (!isPlaying) return;
     const clickedSquare = square.slice();
     if (square[boxNum] || calcWinner(square)) {
       return;
@@ -42,22 +89,8 @@ export default function App() {
     setIsXNext(!isXNext);
   }
 
-  function handleReset() {
-    setSquare(Array(9).fill(null));
-    setIsPlaying((isPlaying) => !isPlaying);
-  }
-
-  const winner = calcWinner(square);
-  let status;
-  if (winner) {
-    status = "The winner is player:" + winner;
-  } else {
-    status = "Next move is for:" + (isXNext ? "X" : "O");
-  }
-
   return (
-    <div className="App">
-      <div className="status">{isPlaying && status}</div>
+    <>
       <div className="board_row">
         <Square value={square[0]} onSquareClick={() => handleSquareClick(0)} />
         <Square value={square[1]} onSquareClick={() => handleSquareClick(1)} />
@@ -73,19 +106,6 @@ export default function App() {
         <Square value={square[7]} onSquareClick={() => handleSquareClick(7)} />
         <Square value={square[8]} onSquareClick={() => handleSquareClick(8)} />
       </div>
-      <div className="btn_container">
-        <button onClick={handleReset}>{isPlaying ? "Reset" : "Play"}</button>
-      </div>
-    </div>
-  );
-}
-
-function Square({ value, onSquareClick }) {
-  return (
-    <div>
-      <button className="square" onClick={onSquareClick}>
-        {value}
-      </button>
-    </div>
+    </>
   );
 }
